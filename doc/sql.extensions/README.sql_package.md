@@ -25,12 +25,12 @@ Output parameters:
 - `KEY_LENGTH` type `INTEGER` - key length for the record source
 - `ACCESS_PATH` type `RDB$DESCRIPTION NOT NULL` - friendly plan description
 
-```
+```sql
 select *
   from rdb$sql.explain('select * from employee where emp_no = ?');
 ```
 
-```
+```sql
 select *
   from rdb$sql.explain(q'{
     select *
@@ -41,6 +41,22 @@ select *
     )
     where name = ?
   }');
+```
+
+## Procedure `PARSE_UNQUALIFIED_NAMES`
+
+`RDB$SQL.PARSE_UNQUALIFIED_NAMES` is a selectable procedure that parses a list of unqualified SQL names and returns
+one row for each name. The input must follow parse rules for names and the output of unquoted names are uppercased.
+
+```sql
+select *
+  from rdb$sql.parse_unqualified_names('schema1, schema2, "schema3", "schema 4", "schema ""5"""');
+
+-- SCHEMA1
+-- SCHEMA2
+-- schema3
+-- "schema 4"
+-- "schema "5"
 ```
 
 # Authors
