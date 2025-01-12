@@ -36,6 +36,16 @@ using namespace Jrd;
 
 // Class DsqlStatement
 
+DsqlStatement::DsqlStatement(MemoryPool& pool, dsql_dbb* aDsqlAttachment)
+	: PermanentStorage(pool),
+	  dsqlAttachment(aDsqlAttachment),
+	  ports(pool)
+{
+	pool.setStatsGroup(memoryStats);
+
+	schemaSearchPath = dsqlAttachment->dbb_attachment->att_schema_search_path;
+}
+
 // Rethrow an exception with isc_no_meta_update and prefix codes.
 void DsqlStatement::rethrowDdlException(status_exception& ex, bool metadataUpdate, DdlNode* node)
 {
@@ -80,6 +90,7 @@ int DsqlStatement::release()
 
 void DsqlStatement::doRelease()
 {
+	fb_assert(!cacheKey.hasData());
 	setSqlText(nullptr);
 	setOrgText(nullptr, 0);
 

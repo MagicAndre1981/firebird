@@ -1,3 +1,17 @@
+/* FIXME:
+SQL> create table t1 (n1 integer);
+SQL> create view v1 as select * from t1;
+SQL> set plan;
+SQL> select * from v1;
+
+PLAN (V1 "PUBLIC"."T1" NATURAL)
+SQL> set explain;
+SQL> select * from v1;
+
+Select Expression
+    -> Table "PUBLIC"."T1" as V1 "PUBLIC"."T1" Full Scan
+*/
+
 /*
  *  The contents of this file are subject to the Initial
  *  Developer's Public License Version 1.0 (the "License");
@@ -139,16 +153,16 @@ bool RecordSource::getRecord(thread_db* tdbb) const
 string RecordSource::printName(thread_db* tdbb, const string& name, bool quote)
 {
 	const string result(name.c_str(), name.length());
-	return quote ? "\"" + result + "\"" : result;
+	return quote ? "\"" + result + "\"" : result;	// FIXME:
 }
 
-string RecordSource::printName(thread_db* tdbb, const string& name, const string& alias)
+string RecordSource::printName(thread_db* tdbb, const QualifiedName& name, const string& alias)
 {
-	if (name == alias || alias.isEmpty())
-		return printName(tdbb, name, true);
+	if (name.object == alias || alias.isEmpty())
+		return printName(tdbb, name.toQuotedString(), false);
 
-	const string arg1 = printName(tdbb, name, true);
-	const string arg2 = printName(tdbb, alias, true);
+	const string arg1 = printName(tdbb, name.toQuotedString(), false);
+	const string arg2 = printName(tdbb, alias, false);
 
 	string result;
 	result.printf("%s as %s", arg1.c_str(), arg2.c_str());
@@ -187,11 +201,11 @@ void RecordSource::printInversion(thread_db* tdbb, const InversionNode* inversio
 		{
 			const IndexRetrieval* const retrieval = inversion->retrieval;
 
-			MetaName indexName;
-			if (retrieval->irb_name && retrieval->irb_name->hasData())
+			QualifiedName indexName;
+			if (retrieval->irb_name && retrieval->irb_name->object.hasData())
 				indexName = *retrieval->irb_name;
 			else
-				indexName.printf("<index id %d>", retrieval->irb_index + 1);
+				indexName.object.printf("<index id %d>", retrieval->irb_index + 1);
 
 			if (detailed)
 			{
@@ -246,11 +260,11 @@ void RecordSource::printInversion(thread_db* tdbb, const InversionNode* inversio
 					}
 				}
 
-				plan->text = "Index " + printName(tdbb, indexName.c_str()) +
+				plan->text = "Index " + printName(tdbb, indexName.toQuotedString()) +
 					(fullscan ? " Full" : unique ? " Unique" : list ? " List" : " Range") + " Scan" + bounds;
 			}
 			else
-				plan->text = printName(tdbb, indexName.c_str(), false);
+				plan->text = printName(tdbb, indexName.toQuotedString(), false);
 		}
 		break;
 

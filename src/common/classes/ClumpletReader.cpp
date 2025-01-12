@@ -490,6 +490,8 @@ ClumpletReader::ClumpletType ClumpletReader::getClumpletType(UCHAR tag) const
 		case isc_action_svc_validate:
 			switch (tag)
 			{
+			case isc_spb_val_sch_incl:
+			case isc_spb_val_sch_excl:
 			case isc_spb_val_tab_incl:
 			case isc_spb_val_tab_excl:
 			case isc_spb_val_idx_incl:

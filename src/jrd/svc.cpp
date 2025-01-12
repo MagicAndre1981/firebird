@@ -3139,6 +3139,8 @@ bool Service::process_switches(ClumpletReader& spb, string& switches)
 				}
 				val_database = true;
 				// fall thru
+			case isc_spb_val_sch_incl:
+			case isc_spb_val_sch_excl:
 			case isc_spb_val_tab_incl:
 			case isc_spb_val_tab_excl:
 			case isc_spb_val_idx_incl:

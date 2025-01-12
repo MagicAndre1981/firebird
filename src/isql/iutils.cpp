@@ -159,6 +159,33 @@ string IUTILS_name_to_string(const MetaString& name)
 }
 
 
+string IUTILS_name_to_string(const QualifiedMetaString& name)
+{
+	if (isqlGlob.db_SQL_dialect > SQL_DIALECT_V6_TRANSITION)
+		return name.toQuotedString();
+	else
+	{
+		string str(name.schema.c_str());
+
+		if (name.package.hasData())
+		{
+			if (str.hasData())
+				str += ".";
+			str += name.package.c_str();
+		}
+
+		if (name.object.hasData())
+		{
+			if (str.hasData())
+				str += ".";
+			str += name.object.c_str();
+		}
+
+		return str;
+	}
+}
+
+
 void IUTILS_printf(FILE* fp, const char* buffer)
 {
 /**************************************

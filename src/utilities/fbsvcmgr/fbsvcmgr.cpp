@@ -598,6 +598,8 @@ const SvcSwitches traceChgStateOptions[] =
 const SvcSwitches validateOptions[] =
 {
 	{"dbname", putStringArgument, 0, isc_spb_dbname, 0},
+	{"val_sch_incl", putStringArgument, 0, isc_spb_val_sch_incl, 0},
+	{"val_sch_excl", putStringArgument, 0, isc_spb_val_sch_excl, 0},
 	{"val_tab_incl", putStringArgument, 0, isc_spb_val_tab_incl, 0},
 	{"val_tab_excl", putStringArgument, 0, isc_spb_val_tab_excl, 0},
 	{"val_idx_incl", putStringArgument, 0, isc_spb_val_idx_incl, 0},
